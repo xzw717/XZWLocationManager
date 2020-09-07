@@ -31,23 +31,10 @@ Pod::Spec.new do |spec|
   spec.source       = { :git => "https://github.com/xzw717/XZWLocationManager.git", :tag => "#{spec.version}" }
 
   spec.source_files  = "XZWLocationManager", "XZWLocationManager/**/*.{h,m}"
-  spec.exclude_files = "Classes/Exclude"
 
-  # spec.resource  = "icon.png"
-  # spec.resources = "Resources/*.png"
-
-  # spec.preserve_paths = "FilesToSave", "MoreFilesToSave"
-
+  #spec.exclude_files = "Classes/Exclude"
 
   spec.framework  = "CoreLocation"
-  # spec.frameworks = "SomeFramework", "AnotherFramework"
 
-  # spec.library   = "iconv"
-  # spec.libraries = "iconv", "xml2"
-
-  # spec.requires_arc = true
-
-  # spec.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
-  # spec.dependency "JSONKit", "~> 1.4"
 
 end
