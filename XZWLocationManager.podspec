@@ -10,7 +10,7 @@ Pod::Spec.new do |spec|
                   可以随便使用哦，有问题随时联系 751208037@qq.com
                    DESC
 
-  spec.homepage     = "http://EXAMPLE/XZWLocationManager"
+  spec.homepage     = "https://github.com/xzw717/XZWLocationManager"
   # spec.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
   spec.license      = "MIT"
@@ -28,7 +28,7 @@ Pod::Spec.new do |spec|
   # spec.watchos.deployment_target = "2.0"
   # spec.tvos.deployment_target = "9.0"
 
-  spec.source       = { :git => "http://EXAMPLE/XZWLocationManager.git", :tag => "#{spec.version}" }
+  spec.source       = { :git => "https://github.com/xzw717/XZWLocationManager.git", :tag => "#{spec.version}" }
 
   spec.source_files  = "XZWLocationManager", "XZWLocationManager/**/*.{h,m}"
   spec.exclude_files = "Classes/Exclude"

@@ -86,7 +86,7 @@
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
     [alert addAction:okAction];
     [alert addAction:cancelAction];
-    [[ManagerEngine currentViewControll] presentViewController:alert animated:YES completion:nil];
+    [[self currentViewControll] presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)stopLocation {
@@ -98,16 +98,15 @@
     CLLocation *currentLocation = [locations lastObject];
     CLGeocoder *geoCoder = [[CLGeocoder alloc]init]; //打印当前的经度与纬度
 //    NSLog(@"%f,%f",currentLocation.coordinate.latitude,currentLocation.coordinate.longitude); //反地理编码
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     [geoCoder reverseGeocodeLocation:currentLocation completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
-        @strongify(self);
         if (placemarks.count > 0) {
             CLPlacemark *placeMark = placemarks[0];
-            self.currentCity = placeMark.locality; if (!self.currentCity) {
-                self.currentCity = @"无法定位当前城市";
+            weakSelf.currentCity = placeMark.locality; if (!weakSelf.currentCity) {
+                weakSelf.currentCity = @"无法定位当前城市";
             }
             CLLocationCoordinate2D locationNow = [HQJLocationManager wgs84ToGcj02:currentLocation.coordinate];
-            !self.location ? :self.location(locationNow.latitude,locationNow.longitude,self.currentCity);
+            !weakSelf.location ? :weakSelf.location(locationNow.latitude,locationNow.longitude,weakSelf.currentCity);
 
 //            if (currentLocation.coordinate.latitude && currentLocation.coordinate.longitude && ![self.currentCity isEqualToString:@"无法定位当前城市"]) {
 //                [self.locationmanager stopUpdatingLocation];
@@ -173,5 +172,19 @@
     ret += LON_OFFSET_3;
     return ret;
 }
-
+- (UIViewController *)currentViewControll{
+    UIWindow * window = [[UIApplication sharedApplication] keyWindow];
+    
+    UIViewController *result = window.rootViewController;
+    while (result.presentedViewController) {
+        result = result.presentedViewController;
+    }
+    if ([result isKindOfClass:[UITabBarController class]]) {
+        result = [(UITabBarController *)result selectedViewController];
+    }
+    if ([result isKindOfClass:[UINavigationController class]]) {
+        result = [(UINavigationController *)result topViewController];
+    }
+    return result;
+}
 @end
