@@ -4,7 +4,7 @@ Pod::Spec.new do |spec|
 
 
   spec.name         = "XZWLocationManager"
-  spec.version      = "0.0.2"
+  spec.version      = "0.0.3"
   spec.summary      = "一个轻松小巧的定位管理类"
   spec.description  = <<-DESC
                   可以随便使用哦，有问题随时联系 751208037@qq.com
