@@ -16,8 +16,8 @@
 		1F1F14D325071B170094F632 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F14D225071B170094F632 /* main.m */; };
 		1F1F14DD25071B170094F632 /* XZWLocationManageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F14DC25071B170094F632 /* XZWLocationManageTests.m */; };
 		1F1F14E825071B170094F632 /* XZWLocationManageUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F14E725071B170094F632 /* XZWLocationManageUITests.m */; };
-		1F1F14FA25071B400094F632 /* HQJLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F14F625071B400094F632 /* HQJLocationManager.m */; };
 		1F1F14FB25071B400094F632 /* XZWLocationManager.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 1F1F14F825071B400094F632 /* XZWLocationManager.podspec */; };
+		1F1F14FF25076BD30094F632 /* HQJLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F14FD25076BD30094F632 /* HQJLocationManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,9 +56,9 @@
 		1F1F14E325071B170094F632 /* XZWLocationManageUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XZWLocationManageUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F1F14E725071B170094F632 /* XZWLocationManageUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZWLocationManageUITests.m; sourceTree = "<group>"; };
 		1F1F14E925071B170094F632 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1F1F14F625071B400094F632 /* HQJLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQJLocationManager.m; sourceTree = "<group>"; };
 		1F1F14F825071B400094F632 /* XZWLocationManager.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XZWLocationManager.podspec; sourceTree = "<group>"; };
-		1F1F14F925071B400094F632 /* HQJLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQJLocationManager.h; sourceTree = "<group>"; };
+		1F1F14FD25076BD30094F632 /* HQJLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQJLocationManager.m; sourceTree = "<group>"; };
+		1F1F14FE25076BD30094F632 /* HQJLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQJLocationManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +89,6 @@
 		1F1F14B425071B170094F632 = {
 			isa = PBXGroup;
 			children = (
-				1F1F14F525071B400094F632 /* XZWLocationManager */,
 				1F1F14F725071B400094F632 /* 0.0.1 */,
 				1F1F14BF25071B170094F632 /* XZWLocationManage */,
 				1F1F14DB25071B170094F632 /* XZWLocationManageTests */,
@@ -111,6 +110,7 @@
 		1F1F14BF25071B170094F632 /* XZWLocationManage */ = {
 			isa = PBXGroup;
 			children = (
+				1F1F14FC25076BD30094F632 /* XZWLocationManager */,
 				1F1F14C025071B170094F632 /* AppDelegate.h */,
 				1F1F14C125071B170094F632 /* AppDelegate.m */,
 				1F1F14C325071B170094F632 /* SceneDelegate.h */,
@@ -144,22 +144,22 @@
 			path = XZWLocationManageUITests;
 			sourceTree = "<group>";
 		};
-		1F1F14F525071B400094F632 /* XZWLocationManager */ = {
-			isa = PBXGroup;
-			children = (
-				1F1F14F925071B400094F632 /* HQJLocationManager.h */,
-				1F1F14F625071B400094F632 /* HQJLocationManager.m */,
-			);
-			name = XZWLocationManager;
-			path = ../XZWLocationManager;
-			sourceTree = "<group>";
-		};
 		1F1F14F725071B400094F632 /* 0.0.1 */ = {
 			isa = PBXGroup;
 			children = (
 				1F1F14F825071B400094F632 /* XZWLocationManager.podspec */,
 			);
 			path = 0.0.1;
+			sourceTree = "<group>";
+		};
+		1F1F14FC25076BD30094F632 /* XZWLocationManager */ = {
+			isa = PBXGroup;
+			children = (
+				1F1F14FE25076BD30094F632 /* HQJLocationManager.h */,
+				1F1F14FD25076BD30094F632 /* HQJLocationManager.m */,
+			);
+			name = XZWLocationManager;
+			path = ../../XZWLocationManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -293,7 +293,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F1F14FA25071B400094F632 /* HQJLocationManager.m in Sources */,
+				1F1F14FF25076BD30094F632 /* HQJLocationManager.m in Sources */,
 				1F1F14C825071B170094F632 /* ViewController.m in Sources */,
 				1F1F14C225071B170094F632 /* AppDelegate.m in Sources */,
 				1F1F14D325071B170094F632 /* main.m in Sources */,
@@ -468,7 +468,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Y28K2L3GRG;
+				GCC_INPUT_FILETYPE = automatic;
 				INFOPLIST_FILE = XZWLocationManage/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -485,7 +487,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Y28K2L3GRG;
+				GCC_INPUT_FILETYPE = automatic;
 				INFOPLIST_FILE = XZWLocationManage/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -7,8 +7,9 @@
 //
 
 #import "ViewController.h"
-
+#import "HQJLocationManager.h"
 @interface ViewController ()
+@property (nonatomic, strong) UILabel *label;;
 
 @end
 
@@ -16,8 +17,28 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
+    
+    
+    self.label = [[UILabel alloc]initWithFrame:CGRectMake(10, 100, 500, 30)];
+    self.label.textColor = [UIColor blackColor];
+    self.label.text = @"暂无位置信息";
+    [self.view addSubview:self.label];
+    
+ 
 
+
+
+}
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+//    [[HQJLocationManager shareInstance]getlocations];
+//    [[HQJLocationManager shareInstance]setLocation:^(CGFloat lat, CGFloat lon, NSString * _Nonnull cityName) {
+//        NSLog(@"%f,%f,%@",lat,lon,cityName);
+//        self->label.text = [NSString stringWithFormat:@"经度：%f 纬度：%f 城市：%@",lon,lat,cityName];
+//    }];
+    
+    [[[HQJLocationManager shareInstance] getLocationWithLocationStyle:Wgs84ToGcj02LocationStyle] setLocation:^(CGFloat lat, CGFloat lon, NSString * _Nonnull cityName) {
+        self.label.text = [NSString stringWithFormat:@"经度：%f 纬度：%f 城市：%@",lon,lat,cityName];
+     }];
+}
 
 @end

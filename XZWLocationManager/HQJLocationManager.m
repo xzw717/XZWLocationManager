@@ -33,6 +33,8 @@
 @property (nonatomic, strong) NSString *currentCity;//当前城市
 @property (nonatomic, strong) NSString *strlatitude;//经度
 @property (nonatomic, strong) NSString *strlongitude;//纬度
+@property (nonatomic, assign) LocationStyle locationStyle;
+@property (nonatomic, assign) BOOL isSingle; /// 是否是单次定位 ，默认 否
 @end
 @implementation HQJLocationManager
 + (instancetype)shareInstance {
@@ -40,6 +42,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _instance = [[super allocWithZone:NULL] init];
+        
     });
     return _instance;
 }
@@ -55,8 +58,27 @@
 - (id)mutableCopyWithZone:(NSZone *)zone {
     return self;
 }
-
-- (instancetype)getLocation
+- (void)getlocations {
+       if ([CLLocationManager locationServicesEnabled]) {
+            self.locationmanager = [[CLLocationManager alloc]init];
+            self.locationmanager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+               if ([[UIDevice currentDevice].systemVersion floatValue] >= 8) {
+                   //由于IOS8中定位的授权机制改变 需要进行手动授权
+                   //获取授权认证
+                   [self.locationmanager requestWhenInUseAuthorization];
+               }
+            self.locationmanager.delegate = self;
+            [self.locationmanager requestAlwaysAuthorization];
+            self.currentCity = [NSString new];
+    //        [self.locationmanager requestWhenInUseAuthorization];
+            //设置寻址精度
+            self.locationmanager.desiredAccuracy = kCLLocationAccuracyBest;
+            self.locationmanager.distanceFilter = 5.0;
+            [self.locationmanager startUpdatingLocation];
+            self.isSingle = NO;
+        }
+}
+- (instancetype)getLocationWithLocationStyle:(LocationStyle)style
 { //判断定位功能是否打开
     
     if ([CLLocationManager locationServicesEnabled]) {
@@ -75,14 +97,26 @@
         self.locationmanager.desiredAccuracy = kCLLocationAccuracyBest;
         self.locationmanager.distanceFilter = 5.0;
         [self.locationmanager startUpdatingLocation];
+        self.locationStyle = style;
+        self.isSingle = NO;
     }
     return self;
+}
+
+- (instancetype)singleLocation {
+    self.isSingle = YES;
+     return self;
 }
 
 -(void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 { //设置提示提醒用户打开定位服务
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"允许定位提示" message:@"请在设置中打开定位" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"打开定位" style:UIAlertActionStyleDefault handler:nil];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"打开定位" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+       NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+        if([[UIApplication sharedApplication] canOpenURL:url]) {
+            [[UIApplication sharedApplication] openURL:url];
+        }
+    }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
     [alert addAction:okAction];
     [alert addAction:cancelAction];
@@ -97,7 +131,7 @@
     [self.locationmanager stopUpdatingHeading]; //旧址
     CLLocation *currentLocation = [locations lastObject];
     CLGeocoder *geoCoder = [[CLGeocoder alloc]init]; //打印当前的经度与纬度
-//    NSLog(@"%f,%f",currentLocation.coordinate.latitude,currentLocation.coordinate.longitude); //反地理编码
+    NSLog(@"反：%f,%f",currentLocation.coordinate.latitude,currentLocation.coordinate.longitude); //反地理编码
     __weak typeof(self) weakSelf = self;
     [geoCoder reverseGeocodeLocation:currentLocation completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
         if (placemarks.count > 0) {
@@ -105,14 +139,28 @@
             weakSelf.currentCity = placeMark.locality; if (!weakSelf.currentCity) {
                 weakSelf.currentCity = @"无法定位当前城市";
             }
-            CLLocationCoordinate2D locationNow = [HQJLocationManager wgs84ToGcj02:currentLocation.coordinate];
+            CLLocationCoordinate2D locationNow = currentLocation.coordinate;
+            switch (self.locationStyle) {
+                case DefaultLocationStyle: {
+                    locationNow = currentLocation.coordinate;
+                }
+                    break;
+                case Wgs84ToGcj02LocationStyle: {
+                    locationNow = [HQJLocationManager wgs84ToGcj02:currentLocation.coordinate];
+                    }
+                    break;
+                case Wgs84ToBd09LocationStyle: {
+                    locationNow = [HQJLocationManager wgs84ToBd09:currentLocation.coordinate];
+                    }
+                    break;
+                default:
+                    break;
+            }
             !weakSelf.location ? :weakSelf.location(locationNow.latitude,locationNow.longitude,weakSelf.currentCity);
-
-//            if (currentLocation.coordinate.latitude && currentLocation.coordinate.longitude && ![self.currentCity isEqualToString:@"无法定位当前城市"]) {
-//                [self.locationmanager stopUpdatingLocation];
-//            }
-            //            NSLog(@"%@",self.currentCity);//当前的城市 // NSLog(@"%@",placeMark.subLocality);//当前的位置 // NSLog(@"%@",placeMark.thoroughfare);//当前街道 // NSLog(@"%@",placeMark.name);//具体地址
-            
+            if (weakSelf.isSingle) {
+                manager.delegate = nil;
+                [weakSelf.locationmanager stopUpdatingLocation];
+            }
         }
     }];
     
@@ -148,6 +196,24 @@
     resPoint.longitude = mgLon;
     return resPoint;
 }
+
++ (CLLocationCoordinate2D)wgs84ToBd09:(CLLocationCoordinate2D)location
+{
+    CLLocationCoordinate2D gcj02Pt = [self gcj02Encrypt:location.latitude
+                                                  bdLon:location.longitude];
+    return [self bd09Encrypt:gcj02Pt.latitude bdLon:gcj02Pt.longitude] ;
+}
++(CLLocationCoordinate2D)bd09Encrypt:(double)ggLat bdLon:(double)ggLon
+{
+    CLLocationCoordinate2D bdPt;
+    double x = ggLon, y = ggLat;
+    double z = sqrt(x * x + y * y) + 0.00002 * sin(y * M_PI);
+    double theta = atan2(y, x) + 0.000003 * cos(x * M_PI);
+    bdPt.longitude = z * cos(theta) + 0.0065;
+    bdPt.latitude = z * sin(theta) + 0.006;
+    return bdPt;
+}
+
 + (BOOL)outOfChina:(double)lat bdLon:(double)lon
 {
     if (lon < RANGE_LON_MIN || lon > RANGE_LON_MAX)
@@ -172,8 +238,18 @@
     ret += LON_OFFSET_3;
     return ret;
 }
-- (UIViewController *)currentViewControll{
-    UIWindow * window = [[UIApplication sharedApplication] keyWindow];
+- (UIViewController *)currentViewControll {  
+    UIWindow * window = nil;
+    if (@available (iOS 13.0, *)) {
+        for (UIWindowScene *windowScene in [UIApplication sharedApplication].connectedScenes) {
+            if (windowScene.activationState == UISceneActivationStateForegroundActive) {
+                window = windowScene.windows.firstObject;
+                break;
+            }
+        }
+    } else {
+        window = [UIApplication sharedApplication].keyWindow;
+    }
     
     UIViewController *result = window.rootViewController;
     while (result.presentedViewController) {
